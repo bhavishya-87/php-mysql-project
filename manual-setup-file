@@ -1,0 +1,33 @@
+Manual Version for setup 
+-> Run the commands 
+-> yum install docker 
+-> systemctl start docker 
+-> docker network create app_new_network --driver bridge 
+-> docker run -itd --name app -p 8080:80 -v /php-mysql-project:/var/www/html/ --network app_new_network ubuntu:14.04 
+-> docker run -itd --name db --network app_new_network -e MYSQL_ROOT_PASSWORD=redhat -e MYSQL_USER=any -e MYSQL_PASSWORD=redhat -e MYSQL_DATABASE=goals mysql
+
+Now after running these commands follow the procedure in the "app" container: 
+// going inside in the "app" container 
+-> docker attach app 
+After comming to the container install php and in ubuntu:14.04 we have php5 version present, so 
+-> apt update && apt upgrade
+-> apt install php5 Also for installing php server 
+-> apt install apache2 
+-> apachectl restart
+
+Now after the setup of "app" container, we have to setup database container that is "db": 
+// for goins inside the "db" container 
+-> docker exec -it db bash 
+-> mysql -u root -p After typing the above command enter the password that is "redhat" 
+-> use goals; 
+-> CREATE TABLE goals( goal_id int(100), goal_category int(100), goal_text varchar(100), goal_date date, goal_complete int(100) ); 
+-> ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'redhat'; 
+-> exit;
+
+After exiting we need to setup some more thing 
+-> cd /etc/ 
+-> cat my.cnf 
+After the above command copy the content shown after the command and paste in your notepad. Now paste a line given below next to the line "user=mysql" 
+-> default_authentication_plugin=caching_sha2_password
+
+----------------------------------------------------------------------The setup is complete--------------------------------------------------------------------
